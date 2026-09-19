@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NBA-tipping 2026–27</title>
+<style>
+:root{
+  --p0:#c6efce; --p0t:#006100;
+  --p1:#d9ead3; --p1t:#38761d;
+  --p3:#ffeb9c; --p3t:#9c6500;
+  --p5:#fac090; --p5t:#974706;
+  --p8:#ffc7ce; --p8t:#9c0006;
+  --mork:#1f3864; --lys:#d9e2f3; --gronn:#e2efda;
+}
+*{box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:22px;background:#f5f6f8;color:#222}
+.wrap{max-width:1200px;margin:0 auto}
+h1{color:var(--mork);margin:0 0 4px;font-size:26px}
+h2{color:var(--mork);font-size:18px;margin:0 0 12px}
+.sub{color:#595959;font-size:13px;margin:0 0 18px}
+.card{background:#fff;border:1px solid #dcdfe4;border-radius:8px;padding:18px;margin-bottom:20px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:760px}
+.stilling table{min-width:0}
+@media(max-width:700px){
+  body{padding:12px}
+  h1{font-size:21px}
+  table{font-size:13px}
+  button{padding:8px 12px;font-size:13px}
+}
+th{background:var(--mork);color:#fff;padding:8px 6px;text-align:left;font-weight:bold;font-size:13px}
+th.c{text-align:center}
+td{border:1px solid #dfdfdf;padding:6px}
+td.c{text-align:center}
+tr:nth-child(even) td{background:#fafbfc}
+td.plass{width:46px;text-align:center;color:#595959;font-weight:bold;background:#f0f0f0!important}
+td.fasit{background:var(--gronn)!important;font-weight:bold}
+body.rediger td.fasit{cursor:grab}
+td.fasit.drag{opacity:.35}
+td.fasit.over{box-shadow:inset 0 3px 0 0 var(--mork)}
+td.tipp{color:#0000ff}
+td.poeng{text-align:center;font-weight:bold;width:66px}
+.p0{background:var(--p0)!important;color:var(--p0t)}
+.p1{background:var(--p1)!important;color:var(--p1t)}
+.p3{background:var(--p3)!important;color:var(--p3t)}
+.p5{background:var(--p5)!important;color:var(--p5t)}
+.p8{background:var(--p8)!important;color:var(--p8t)}
+tfoot td{background:#ffd966!important;font-weight:bold;text-align:center}
+.tot{background:#ffd966!important;font-weight:bold;text-align:center}
+.leder{background:var(--p0)!important;color:var(--p0t);font-weight:bold}
+button{background:var(--mork);color:#fff;border:0;border-radius:5px;padding:9px 15px;font-size:14px;cursor:pointer;margin:0 6px 6px 0}
+button.sek{background:#fff;color:var(--mork);border:1px solid var(--mork)}
+button:hover{opacity:.88}
+.tabs button{background:#fff;color:var(--mork);border:1px solid #c5cbd6}
+.tabs button.aktiv{background:var(--mork);color:#fff}
+.skala{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.skala span{padding:5px 11px;border-radius:4px;font-size:13px;font-weight:bold}
+.status{font-size:13px;color:#595959;margin-top:10px}
+.stempel{font-size:12px;color:#777;margin-top:6px}
+.panel{display:none;border-top:2px solid var(--lys);margin-top:16px;padding-top:14px}
+body.rediger .panel{display:block}
+.hint{background:#eef3fb;border-left:4px solid var(--mork);padding:10px 14px;font-size:13px;border-radius:4px;margin:12px 0}
+.feil{background:#fde7e9;border-left:4px solid #9c0006;padding:10px 14px;font-size:13px;border-radius:4px;color:#9c0006}
+textarea{width:100%;height:80px;font-family:monospace;font-size:11px;padding:8px;border:1px solid #ccc;border-radius:4px}
+input[type=text]{font:inherit;padding:4px 6px;border:1px solid #c5cbd6;border-radius:3px;width:100%}
+.visning{display:none}
+body.rediger .visning{display:inline-block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>NBA-tipping 2026–27</h1>
+<p class="sub">Lavest poengsum vinner. 0 poeng for riktig plassering, 1 for én unna, 3 for to, 5 for tre, 8 for fire eller flere.</p>
+
+<div class="card">
+  <h2>Stilling</h2>
+  <div class="stilling">
+  <table>
+    <thead><tr><th>Spiller</th><th class="c">Poeng Øst</th><th class="c">Poeng Vest</th><th class="c">TOTALT</th><th class="c">Plass</th></tr></thead>
+    <tbody id="stilling"></tbody>
+  </table>
+  </div>
+  <div class="skala">
+    <span class="p0">0 p – helt riktig</span>
+    <span class="p1">1 p – 1 unna</span>
+    <span class="p3">3 p – 2 unna</span>
+    <span class="p5">5 p – 3 unna</span>
+    <span class="p8">8 p – 4+ unna</span>
+  </div>
+  <div class="stempel" id="stempel"></div>
+</div>
+
+<div class="card">
+  <div class="tabs">
+    <button id="tab-ost" class="aktiv" onclick="visKonf('ost')">Øst</button>
+    <button id="tab-vest" onclick="visKonf('vest')">Vest</button>
+    <button class="sek" onclick="veksleHjelp()">Hjelp</button>
+    <button class="sek" style="float:right" onclick="veksleRediger()" id="redigerknapp">Rediger</button>
+  </div>
+  <div class="hint" id="hjelp" style="display:none">
+    <strong>Slik leser du tabellen.</strong> Den grønne kolonnen er den faktiske NBA-tabellen
+    akkurat nå. De blå kolonnene er tippene, som ble låst før sesongen. Poengkolonnene til
+    høyre viser hvor mye hver enkelt taper på hver rad: grønt er treff, rødt er langt unna.
+    Summen nederst og stillingen øverst oppdateres automatisk.
+    <br><br>
+    <strong>Er du arrangør?</strong> Trykk <em>Rediger</em>, dra lagene i den grønne kolonnen
+    til riktig rekkefølge, og trykk <em>Lag delelenke</em>. Send lenka til de andre.
+  </div>
+  <div class="scroll"><div id="konf"></div></div>
+  <div class="status" id="kontroll"></div>
+
+  <div class="panel">
+    <div class="hint">
+      <strong>Redigeringsmodus.</strong> Dra lagene i den grønne fasitkolonnen til riktig rekkefølge.
+      Du kan også endre spillernavn og tipp ved å klikke i cellene. Når du er ferdig, trykk
+      <em>Lag delelenke</em> eller <em>Last ned oppdatert side</em> under.
+    </div>
+    <button onclick="lagLenke()">Lag delelenke</button>
+    <button class="sek" onclick="lastNed()">Last ned oppdatert side</button>
+    <button class="sek" onclick="tilbakestill()">Tilbakestill til alfabetisk</button>
+    <div class="status" id="delestatus"></div>
+    <textarea id="lenkefelt" style="display:none;margin-top:10px" readonly></textarea>
+  </div>
+</div>
+
+</div>
+
+<script>
+/*DATA-START*/
+var DATA = {
+  oppdatert: "ikke oppdatert ennå",
+  spillere: ["Anders","Spiller 2","Spiller 3","Spiller 4"],
+  fasit: {
+    ost: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    vest:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]
+  },
+  tipp: {
+    ost: [[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]],
+    vest:[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]]
+  }
+};
+/*DATA-END*/
+
+// Kanoniske lagnavn. Tallene over er indekser inn i disse listene,
+// slik at delelenken blir kort og lagnavn ikke kan skrives feil.
+const LAG = {
+  ost:["Atlanta Hawks","Boston Celtics","Brooklyn Nets","Charlotte Hornets","Chicago Bulls",
+       "Cleveland Cavaliers","Detroit Pistons","Indiana Pacers","Miami Heat","Milwaukee Bucks",
+       "New York Knicks","Orlando Magic","Philadelphia 76ers","Toronto Raptors","Washington Wizards"],
+  vest:["Dallas Mavericks","Denver Nuggets","Golden State Warriors","Houston Rockets","LA Clippers",
+        "Los Angeles Lakers","Memphis Grizzlies","Minnesota Timberwolves","New Orleans Pelicans",
+        "Oklahoma City Thunder","Phoenix Suns","Portland Trail Blazers","Sacramento Kings",
+        "San Antonio Spurs","Utah Jazz"]
+};
+const POENG = [0,1,3,5,8];
+const B36 = "0123456789abcdefghijklmnopqrstuvwxyz";
+let aktiv = "ost", rediger = false;
+
+/* ---------- koding av tilstand til/fra URL ---------- */
+function permTilStr(a){ return a.map(i=>B36[i]).join(""); }
+function strTilPerm(s){ return s.split("").map(c=>B36.indexOf(c)); }
+
+function kodeTilstand(d){
+  const blokk = k => [d.fasit[k], ...d.tipp[k]].map(permTilStr).join(".");
+  return "v1~" + encodeURIComponent(d.oppdatert) + "~" +
+         encodeURIComponent(d.spillere.join("|")) + "~" +
+         blokk("ost") + "~" + blokk("vest");
+}
+
+function lesTilstand(s){
+  const del = s.split("~");
+  if(del[0] !== "v1") throw new Error("ukjent format");
+  const spillere = decodeURIComponent(del[2]).split("|");
+  const les = b => { const p = b.split(".").map(strTilPerm);
+                     return {fasit:p[0], tipp:p.slice(1)}; };
+  const o = les(del[3]), v = les(del[4]);
+  const gyldig = p => p.length===15 && new Set(p).size===15 && p.every(x=>x>=0&&x<15);
+  if(![o.fasit,v.fasit,...o.tipp,...v.tipp].every(gyldig)) throw new Error("ugyldige data");
+  return {oppdatert: decodeURIComponent(del[1]), spillere,
+          fasit:{ost:o.fasit, vest:v.fasit}, tipp:{ost:o.tipp, vest:v.tipp}};
+}
+
+/* ---------- poeng ---------- */
+const poeng = d => POENG[Math.min(d,4)];
+
+function poengFor(konf, sp){
+  let sum = 0;
+  DATA.fasit[konf].forEach((lagIdx, plass)=>{
+    const tippPlass = DATA.tipp[konf][sp].indexOf(lagIdx);
+    if(tippPlass >= 0) sum += poeng(Math.abs(plass - tippPlass));
+  });
+  return sum;
+}
+
+/* ---------- tegning ---------- */
+function tegnKonf(){
+  const navn = LAG[aktiv];
+  let h = '<table><thead><tr><th class="c">Plass</th><th>Faktisk tabell</th>';
+  DATA.spillere.forEach((s,i)=>h += `<th>${rediger
+      ? `<input type="text" value="${s.replace(/"/g,'&quot;')}" onchange="settNavn(${i},this.value)">` : s}</th>`);
+  DATA.spillere.forEach(s=>h += `<th class="c">Poeng ${s}</th>`);
+  h += '</tr></thead><tbody>';
+
+  DATA.fasit[aktiv].forEach((lagIdx, plass)=>{
+    h += `<tr><td class="plass">${plass+1}</td>`;
+    h += `<td class="fasit" draggable="${rediger}" data-i="${plass}">${navn[lagIdx]}</td>`;
+    DATA.spillere.forEach((_,sp)=>{
+      const t = DATA.tipp[aktiv][sp][plass];
+      h += `<td class="tipp">${rediger
+        ? `<select onchange="settTipp(${sp},${plass},this.value)">` +
+          navn.map((n,i)=>`<option value="${i}"${i===t?" selected":""}>${n}</option>`).join("") +
+          `</select>`
+        : navn[t]}</td>`;
+    });
+    DATA.spillere.forEach((_,sp)=>{
+      const tp = DATA.tipp[aktiv][sp].indexOf(lagIdx);
+      if(tp < 0){ h += '<td class="poeng">–</td>'; return; }
+      const p = poeng(Math.abs(plass - tp));
+      h += `<td class="poeng p${p}">${p}</td>`;
+    });
+    h += '</tr>';
+  });
+
+  h += '</tbody><tfoot><tr><td colspan="2" style="text-align:right;background:#fff!important">SUM POENG</td>';
+  DATA.spillere.forEach(()=>h += '<td style="background:#fff!important"></td>');
+  DATA.spillere.forEach((_,sp)=>h += `<td>${poengFor(aktiv,sp)}</td>`);
+  h += '</tr></tfoot></table>';
+
+  document.getElementById("konf").innerHTML = h;
+  if(rediger) koblDrag();
+  kontroller();
+}
+
+function koblDrag(){
+  let fra = null;
+  document.querySelectorAll("td.fasit").forEach(td=>{
+    td.addEventListener("dragstart", ()=>{ fra = +td.dataset.i; td.classList.add("drag"); });
+    td.addEventListener("dragend", ()=>document.querySelectorAll("td.fasit")
+        .forEach(x=>x.classList.remove("drag","over")));
+    td.addEventListener("dragover", e=>{ e.preventDefault(); td.classList.add("over"); });
+    td.addEventListener("dragleave", ()=>td.classList.remove("over"));
+    td.addEventListener("drop", e=>{
+      e.preventDefault();
+      const til = +td.dataset.i;
+      if(fra === null || fra === til) return;
+      const a = DATA.fasit[aktiv];
+      a.splice(til, 0, a.splice(fra,1)[0]);
+      tegn();
+    });
+  });
+}
+
+function settNavn(i, v){ DATA.spillere[i] = v.trim() || ("Spiller " + (i+1)); tegn(); }
+
+function settTipp(sp, plass, v){
+  // Bytter plass paa to lag slik at tippet alltid inneholder alle 15 én gang
+  const arr = DATA.tipp[aktiv][sp], ny = +v, gammel = arr[plass];
+  const annen = arr.indexOf(ny);
+  arr[plass] = ny;
+  if(annen >= 0 && annen !== plass) arr[annen] = gammel;
+  tegn();
+}
+
+function kontroller(){
+  const feil = [];
+  ["ost","vest"].forEach(k=>{
+    const sjekk = (a,n)=>{ if(a.length!==15 || new Set(a).size!==15) feil.push(`${k==="ost"?"Øst":"Vest"}: ${n}`); };
+    sjekk(DATA.fasit[k], "fasit");
+    DATA.spillere.forEach((s,i)=>sjekk(DATA.tipp[k][i], s));
+  });
+  const el = document.getElementById("kontroll");
+  el.innerHTML = feil.length
+    ? `<div class="feil"><strong>Feil:</strong> ${feil.join(", ")} – et lag mangler eller står to ganger.</div>`
+    : "Kontroll: alle 30 lag står én gang hos alle. OK.";
+}
+
+function tegnStilling(){
+  const r = DATA.spillere.map((s,i)=>({navn:s, o:poengFor("ost",i), v:poengFor("vest",i)}));
+  r.forEach(x=>x.tot = x.o + x.v);
+  const sortert = [...r].map(x=>x.tot).sort((a,b)=>a-b);
+  r.forEach(x=>x.plass = sortert.indexOf(x.tot) + 1);
+  document.getElementById("stilling").innerHTML = r.map(x=>
+    `<tr><td>${x.navn}</td><td class="c">${x.o}</td><td class="c">${x.v}</td>
+     <td class="tot">${x.tot}</td><td class="c ${x.plass===1?"leder":""}">${x.plass}</td></tr>`).join("");
+  document.getElementById("stempel").textContent = "Tabellen sist oppdatert: " + DATA.oppdatert;
+}
+
+function tegn(){ tegnKonf(); tegnStilling(); }
+
+function visKonf(k){
+  aktiv = k;
+  document.getElementById("tab-ost").classList.toggle("aktiv", k==="ost");
+  document.getElementById("tab-vest").classList.toggle("aktiv", k==="vest");
+  tegn();
+}
+
+function veksleHjelp(){
+  const h = document.getElementById("hjelp");
+  h.style.display = h.style.display === "none" ? "block" : "none";
+}
+
+function veksleRediger(){
+  rediger = !rediger;
+  document.body.classList.toggle("rediger", rediger);
+  document.getElementById("redigerknapp").textContent = rediger ? "Ferdig" : "Rediger";
+  tegn();
+}
+
+function nyDato(){
+  const d = new Date();
+  return d.toLocaleDateString("no-NO",{day:"2-digit",month:"2-digit",year:"numeric"}) +
+         " kl. " + d.toLocaleTimeString("no-NO",{hour:"2-digit",minute:"2-digit"});
+}
+
+function lagLenke(){
+  DATA.oppdatert = nyDato();
+  tegnStilling();
+  const url = location.origin + location.pathname + "#" + kodeTilstand(DATA);
+  const felt = document.getElementById("lenkefelt");
+  felt.style.display = "block";
+  felt.value = url;
+  felt.select();
+  const st = document.getElementById("delestatus");
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url)
+      .then(()=>st.textContent = "Lenken er kopiert. Lim den inn til deltakerne – de ser tabellen slik den er nå.")
+      .catch(()=>st.textContent = "Kopier lenken i feltet under manuelt.");
+  } else {
+    st.textContent = "Kopier lenken i feltet under manuelt.";
+  }
+}
+
+async function lastNed(){
+  DATA.oppdatert = nyDato();
+  tegnStilling();
+  const st = document.getElementById("delestatus");
+  const blokk = "/*DATA-START*/\nvar DATA = " + JSON.stringify(DATA, null, 2) + ";\n/*DATA-END*/";
+  try{
+    const kilde = await (await fetch(location.href.split("#")[0], {cache:"no-store"})).text();
+    const ny = kilde.replace(/\/\*DATA-START\*\/[\s\S]*?\/\*DATA-END\*\//, ()=>blokk);
+    if(ny === kilde) throw new Error("fant ikke datablokken");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([ny], {type:"text/html"}));
+    a.download = "index.html";
+    a.click();
+    st.textContent = "Ny index.html lastet ned. Last den opp der siden ligger, så ser alle den nye tabellen.";
+  }catch(e){
+    const felt = document.getElementById("lenkefelt");
+    felt.style.display = "block";
+    felt.value = blokk;
+    st.textContent = "Kunne ikke bygge fila automatisk (" + e.message +
+      "). Kopier blokken under og erstatt DATA-blokken i index.html manuelt.";
+  }
+}
+
+function tilbakestill(){
+  if(!confirm("Sette alt tilbake til alfabetisk rekkefølge?")) return;
+  const r = () => [...Array(15).keys()];
+  DATA.fasit = {ost:r(), vest:r()};
+  DATA.tipp = {ost:[r(),r(),r(),r()], vest:[r(),r(),r(),r()]};
+  tegn();
+}
+
+/* Lenke-data overstyrer det som ligger i fila */
+if(location.hash.length > 1){
+  try{ DATA = lesTilstand(decodeURIComponent(location.hash.slice(1))); }
+  catch(e){ console.warn("Kunne ikke lese lenkedata:", e.message); }
+}
+tegn();
+</script>
+</body>
+</html>
