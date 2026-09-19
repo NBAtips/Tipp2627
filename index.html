@@ -11,79 +11,171 @@
   --p3:#ffeb9c; --p3t:#9c6500;
   --p5:#fac090; --p5t:#974706;
   --p8:#ffc7ce; --p8t:#9c0006;
-  --mork:#1f3864; --lys:#d9e2f3; --gronn:#e2efda;
+  --teal:#00a19c; --lilla:#5c2d91; --magenta:#e0218a;
+  --oransje:#f07427; --gul:#fdc82f; --mork:#141433;
+  --gronn:#e2efda;
 }
 *{box-sizing:border-box}
-body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:22px;background:#f5f6f8;color:#222}
+body{
+  font-family:"Trebuchet MS",Verdana,Arial,sans-serif;margin:0;padding:22px;color:#1a1a2e;
+  background:#141433;
+  background-image:
+    linear-gradient(115deg,rgba(224,33,138,.16) 0 12px,transparent 12px 26px),
+    linear-gradient(245deg,rgba(0,161,156,.18) 0 12px,transparent 12px 26px),
+    radial-gradient(circle at 12% 18%,rgba(253,200,47,.22) 0 9px,transparent 10px),
+    radial-gradient(circle at 78% 62%,rgba(240,116,39,.2) 0 7px,transparent 8px),
+    radial-gradient(circle at 40% 88%,rgba(92,45,145,.4) 0 11px,transparent 12px),
+    linear-gradient(160deg,#1b1b46,#141433 60%,#241a4a);
+  background-attachment:fixed;
+}
 .wrap{max-width:1200px;margin:0 auto}
-h1{color:var(--mork);margin:0 0 4px;font-size:26px}
-h2{color:var(--mork);font-size:18px;margin:0 0 12px}
-.sub{color:#595959;font-size:13px;margin:0 0 18px}
-.card{background:#fff;border:1px solid #dcdfe4;border-radius:8px;padding:18px;margin-bottom:20px}
+
+/* ---- topp ---- */
+.topp{
+  position:relative;overflow:hidden;border-radius:14px;padding:20px 22px;margin-bottom:20px;
+  background:linear-gradient(100deg,var(--lilla),var(--teal) 55%,var(--magenta));
+  border:4px solid #fff;box-shadow:7px 7px 0 var(--mork);
+}
+.topp:before{
+  content:"";position:absolute;inset:0;opacity:.32;
+  background-image:
+    linear-gradient(60deg,#fff 0 3px,transparent 3px 17px),
+    linear-gradient(-60deg,#fdc82f 0 3px,transparent 3px 23px);
+}
+.toppinn{position:relative;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+h1{
+  margin:0;font-size:34px;line-height:1;color:#fff;letter-spacing:1px;font-style:italic;
+  text-transform:uppercase;text-shadow:3px 3px 0 var(--mork),6px 6px 0 rgba(253,200,47,.85);
+}
+.slag{
+  display:inline-block;margin-top:8px;background:var(--gul);color:var(--mork);
+  padding:4px 12px;border-radius:3px;font-weight:bold;font-size:12px;letter-spacing:2px;
+  text-transform:uppercase;transform:rotate(-2deg);border:2px solid var(--mork);
+}
+.ball{width:76px;height:76px;flex:0 0 auto;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.45))}
+.spin{animation:snurr 9s linear infinite}
+@keyframes snurr{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spin{animation:none}}
+
+/* ---- kort ---- */
+.card{
+  background:#fff;border:4px solid var(--mork);border-radius:12px;padding:18px;
+  margin-bottom:22px;box-shadow:7px 7px 0 rgba(0,161,156,.75);position:relative
+}
+.card.magenta{box-shadow:7px 7px 0 rgba(224,33,138,.7)}
+h2{
+  color:var(--lilla);font-size:19px;margin:0 0 12px;text-transform:uppercase;
+  letter-spacing:1px;font-style:italic;display:flex;align-items:center;gap:9px
+}
+h2 svg{width:22px;height:22px;flex:0 0 auto}
+.strek{height:7px;border-radius:4px;margin:-4px 0 14px;
+  background:repeating-linear-gradient(90deg,var(--magenta) 0 16px,var(--gul) 16px 32px,var(--teal) 32px 48px)}
+
+/* ---- tabeller ---- */
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%;font-size:14px;min-width:760px}
 .stilling table{min-width:0}
-@media(max-width:700px){
-  body{padding:12px}
-  h1{font-size:21px}
-  table{font-size:13px}
-  button{padding:8px 12px;font-size:13px}
-}
-th{background:var(--mork);color:#fff;padding:8px 6px;text-align:left;font-weight:bold;font-size:13px}
+th{background:var(--mork);color:#fff;padding:9px 6px;text-align:left;font-size:12px;
+   text-transform:uppercase;letter-spacing:.7px}
 th.c{text-align:center}
-td{border:1px solid #dfdfdf;padding:6px}
+td{border:1px solid #d8d8e4;padding:6px}
 td.c{text-align:center}
-tr:nth-child(even) td{background:#fafbfc}
-td.plass{width:46px;text-align:center;color:#595959;font-weight:bold;background:#f0f0f0!important}
+tr:nth-child(even) td{background:#f7f7fc}
+td.plass{width:46px;text-align:center;font-weight:bold;color:#fff;
+  background:var(--lilla)!important;font-style:italic}
 td.fasit{background:var(--gronn)!important;font-weight:bold}
 body.rediger td.fasit{cursor:grab}
 td.fasit.drag{opacity:.35}
-td.fasit.over{box-shadow:inset 0 3px 0 0 var(--mork)}
-td.tipp{color:#0000ff}
+td.fasit.over{box-shadow:inset 0 3px 0 0 var(--magenta)}
+td.tipp{color:#2a2ad0}
 td.poeng{text-align:center;font-weight:bold;width:66px}
 .p0{background:var(--p0)!important;color:var(--p0t)}
 .p1{background:var(--p1)!important;color:var(--p1t)}
 .p3{background:var(--p3)!important;color:var(--p3t)}
 .p5{background:var(--p5)!important;color:var(--p5t)}
 .p8{background:var(--p8)!important;color:var(--p8t)}
-tfoot td{background:#ffd966!important;font-weight:bold;text-align:center}
-.tot{background:#ffd966!important;font-weight:bold;text-align:center}
+tfoot td{background:var(--gul)!important;font-weight:bold;text-align:center}
+.tot{background:var(--gul)!important;font-weight:bold;text-align:center}
 .leder{background:var(--p0)!important;color:var(--p0t);font-weight:bold}
-button{background:var(--mork);color:#fff;border:0;border-radius:5px;padding:9px 15px;font-size:14px;cursor:pointer;margin:0 6px 6px 0}
-button.sek{background:#fff;color:var(--mork);border:1px solid var(--mork)}
-button:hover{opacity:.88}
-.tabs button{background:#fff;color:var(--mork);border:1px solid #c5cbd6}
-.tabs button.aktiv{background:var(--mork);color:#fff}
-.skala{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.skala span{padding:5px 11px;border-radius:4px;font-size:13px;font-weight:bold}
-.status{font-size:13px;color:#595959;margin-top:10px}
-.stempel{font-size:12px;color:#777;margin-top:6px}
-.panel{display:none;border-top:2px solid var(--lys);margin-top:16px;padding-top:14px}
+
+/* ---- knapper ---- */
+button{
+  background:var(--lilla);color:#fff;border:3px solid var(--mork);border-radius:6px;
+  padding:8px 14px;font:bold 13px "Trebuchet MS",Verdana,sans-serif;cursor:pointer;
+  margin:0 6px 6px 0;text-transform:uppercase;letter-spacing:.6px;box-shadow:3px 3px 0 var(--mork)
+}
+button:hover{background:var(--magenta)}
+button:active{transform:translate(3px,3px);box-shadow:none}
+button.sek{background:#fff;color:var(--mork)}
+button.sek:hover{background:var(--gul)}
+.tabs button{background:#fff;color:var(--mork)}
+.tabs button.aktiv{background:var(--teal);color:#fff}
+
+/* ---- diverse ---- */
+.skala{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.skala span{padding:6px 12px;border-radius:4px;font-size:13px;font-weight:bold;
+  border:2px solid var(--mork);box-shadow:2px 2px 0 var(--mork)}
+.status{font-size:13px;color:#4a4a63;margin-top:10px}
+.stempel{font-size:12px;color:#6a6a80;margin-top:8px;font-style:italic}
+.panel{display:none;border-top:4px dashed var(--teal);margin-top:16px;padding-top:14px}
 body.rediger .panel{display:block}
-.hint{background:#eef3fb;border-left:4px solid var(--mork);padding:10px 14px;font-size:13px;border-radius:4px;margin:12px 0}
-.feil{background:#fde7e9;border-left:4px solid #9c0006;padding:10px 14px;font-size:13px;border-radius:4px;color:#9c0006}
-textarea{width:100%;height:80px;font-family:monospace;font-size:11px;padding:8px;border:1px solid #ccc;border-radius:4px}
-input[type=text]{font:inherit;padding:4px 6px;border:1px solid #c5cbd6;border-radius:3px;width:100%}
-.visning{display:none}
-body.rediger .visning{display:inline-block}
+.hint{background:#f2ecfb;border-left:7px solid var(--lilla);padding:11px 14px;font-size:13px;
+  border-radius:0 6px 6px 0;margin:12px 0}
+.feil{background:#fde7e9;border-left:7px solid #9c0006;padding:11px 14px;font-size:13px;
+  border-radius:0 6px 6px 0;color:#9c0006;font-weight:bold}
+textarea{width:100%;height:80px;font-family:monospace;font-size:11px;padding:8px;
+  border:3px solid var(--mork);border-radius:6px}
+input[type=text]{font:inherit;padding:4px 6px;border:2px solid var(--mork);border-radius:4px;width:100%}
+select{font:inherit;padding:3px;border:1px solid #9a9ab5;border-radius:4px;max-width:100%}
+.bunn{text-align:center;padding:6px 0 20px;color:rgba(255,255,255,.55);font-size:12px;
+  letter-spacing:1px;text-transform:uppercase}
+@media(max-width:700px){
+  body{padding:12px}
+  h1{font-size:23px}
+  .ball{width:54px;height:54px}
+  table{font-size:13px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<h1>NBA-tipping 2026–27</h1>
-<p class="sub">Lavest poengsum vinner. 0 poeng for riktig plassering, 1 for én unna, 3 for to, 5 for tre, 8 for fire eller flere.</p>
+<div class="topp">
+  <div class="toppinn">
+    <svg class="ball spin" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="46" fill="#f07427" stroke="#141433" stroke-width="5"/>
+      <g fill="none" stroke="#141433" stroke-width="4.5">
+        <path d="M50 4v92"/>
+        <path d="M6.5 38h87M6.5 62h87" opacity="0"/>
+        <path d="M4 50h92"/>
+        <path d="M18 14c14 20 14 52 0 72"/>
+        <path d="M82 14c-14 20-14 52 0 72"/>
+      </g>
+    </svg>
+    <div>
+      <h1>NBA-tipping 26/27</h1>
+      <span class="slag">★ Øst vs Vest ★ Lavest poeng vinner ★</span>
+    </div>
+  </div>
+</div>
 
 <div class="card">
-  <h2>Stilling</h2>
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"
+            fill="#fdc82f" stroke="#141433" stroke-width="1.6" stroke-linejoin="round"/>
+    </svg>
+    Stilling
+  </h2>
+  <div class="strek"></div>
   <div class="stilling">
-  <table>
-    <thead><tr><th>Spiller</th><th class="c">Poeng Øst</th><th class="c">Poeng Vest</th><th class="c">TOTALT</th><th class="c">Plass</th></tr></thead>
-    <tbody id="stilling"></tbody>
-  </table>
+    <table>
+      <thead><tr><th>Spiller</th><th class="c">Poeng Øst</th><th class="c">Poeng Vest</th><th class="c">Totalt</th><th class="c">Plass</th></tr></thead>
+      <tbody id="stilling"></tbody>
+    </table>
   </div>
   <div class="skala">
-    <span class="p0">0 p – helt riktig</span>
+    <span class="p0">0 p – blink</span>
     <span class="p1">1 p – 1 unna</span>
     <span class="p3">3 p – 2 unna</span>
     <span class="p5">5 p – 3 unna</span>
@@ -92,39 +184,42 @@ body.rediger .visning{display:inline-block}
   <div class="stempel" id="stempel"></div>
 </div>
 
-<div class="card">
+<div class="card magenta">
   <div class="tabs">
     <button id="tab-ost" class="aktiv" onclick="visKonf('ost')">Øst</button>
     <button id="tab-vest" onclick="visKonf('vest')">Vest</button>
     <button class="sek" onclick="veksleHjelp()">Hjelp</button>
     <button class="sek" style="float:right" onclick="veksleRediger()" id="redigerknapp">Rediger</button>
   </div>
+
   <div class="hint" id="hjelp" style="display:none">
     <strong>Slik leser du tabellen.</strong> Den grønne kolonnen er den faktiske NBA-tabellen
-    akkurat nå. De blå kolonnene er tippene, som ble låst før sesongen. Poengkolonnene til
-    høyre viser hvor mye hver enkelt taper på hver rad: grønt er treff, rødt er langt unna.
-    Summen nederst og stillingen øverst oppdateres automatisk.
+    akkurat nå. De blå kolonnene er tippene, låst før sesongen. Poengkolonnene til høyre viser
+    hva hver enkelt taper på hver rad: grønt er treff, rødt er langt unna. Summen nederst og
+    stillingen øverst oppdateres automatisk.
     <br><br>
-    <strong>Er du arrangør?</strong> Trykk <em>Rediger</em>, dra lagene i den grønne kolonnen
-    til riktig rekkefølge, og trykk <em>Lag delelenke</em>. Send lenka til de andre.
+    <strong>Er du arrangør?</strong> Trykk <em>Rediger</em>, dra lagene i den grønne kolonnen til
+    riktig rekkefølge, og bruk <em>Last ned oppdatert side</em> for å publisere på nytt.
   </div>
+
   <div class="scroll"><div id="konf"></div></div>
   <div class="status" id="kontroll"></div>
 
   <div class="panel">
     <div class="hint">
-      <strong>Redigeringsmodus.</strong> Dra lagene i den grønne fasitkolonnen til riktig rekkefølge.
-      Du kan også endre spillernavn og tipp ved å klikke i cellene. Når du er ferdig, trykk
-      <em>Lag delelenke</em> eller <em>Last ned oppdatert side</em> under.
+      <strong>Redigeringsmodus.</strong> Dra lagene i den grønne fasitkolonnen. Du kan også endre
+      spillernavn og tipp. Husk: endringer her ligger bare i din nettleser til du laster opp en ny
+      fil til GitHub.
     </div>
     <button onclick="lagLenke()">Lag delelenke</button>
     <button class="sek" onclick="lastNed()">Last ned oppdatert side</button>
-    <button class="sek" onclick="tilbakestill()">Tilbakestill til alfabetisk</button>
+    <button class="sek" onclick="tilbakestill()">Tilbakestill</button>
     <div class="status" id="delestatus"></div>
     <textarea id="lenkefelt" style="display:none;margin-top:10px" readonly></textarea>
   </div>
 </div>
 
+<div class="bunn">◆ Ball don't lie ◆</div>
 </div>
 
 <script>
@@ -149,8 +244,6 @@ var DATA = {
 };
 /*DATA-END*/
 
-// Kanoniske lagnavn. Tallene over er indekser inn i disse listene,
-// slik at delelenken blir kort og lagnavn ikke kan skrives feil.
 const LAG = {
   ost:["Atlanta Hawks","Boston Celtics","Brooklyn Nets","Charlotte Hornets","Chicago Bulls",
        "Cleveland Cavaliers","Detroit Pistons","Indiana Pacers","Miami Heat","Milwaukee Bucks",
@@ -164,7 +257,6 @@ const POENG = [0,1,3,5,8];
 const B36 = "0123456789abcdefghijklmnopqrstuvwxyz";
 let aktiv = "ost", rediger = false;
 
-/* ---------- koding av tilstand til/fra URL ---------- */
 function permTilStr(a){ return a.map(i=>B36[i]).join(""); }
 function strTilPerm(s){ return s.split("").map(c=>B36.indexOf(c)); }
 
@@ -188,7 +280,6 @@ function lesTilstand(s){
           fasit:{ost:o.fasit, vest:v.fasit}, tipp:{ost:o.tipp, vest:v.tipp}};
 }
 
-/* ---------- poeng ---------- */
 const poeng = d => POENG[Math.min(d,4)];
 
 function poengFor(konf, sp){
@@ -200,7 +291,6 @@ function poengFor(konf, sp){
   return sum;
 }
 
-/* ---------- tegning ---------- */
 function tegnKonf(){
   const navn = LAG[aktiv];
   let h = '<table><thead><tr><th class="c">Plass</th><th>Faktisk tabell</th>';
@@ -261,7 +351,6 @@ function koblDrag(){
 function settNavn(i, v){ DATA.spillere[i] = v.trim() || ("Spiller " + (i+1)); tegn(); }
 
 function settTipp(sp, plass, v){
-  // Bytter plass paa to lag slik at tippet alltid inneholder alle 15 én gang
   const arr = DATA.tipp[aktiv][sp], ny = +v, gammel = arr[plass];
   const annen = arr.indexOf(ny);
   arr[plass] = ny;
@@ -278,14 +367,14 @@ function kontroller(){
   });
   const el = document.getElementById("kontroll");
   el.innerHTML = feil.length
-    ? `<div class="feil"><strong>Feil:</strong> ${feil.join(", ")} – et lag mangler eller står to ganger.</div>`
+    ? `<div class="feil">Feil: ${feil.join(", ")} – et lag mangler eller står to ganger.</div>`
     : "Kontroll: alle 30 lag står én gang hos alle. OK.";
 }
 
 function tegnStilling(){
   const r = DATA.spillere.map((s,i)=>({navn:s, o:poengFor("ost",i), v:poengFor("vest",i)}));
   r.forEach(x=>x.tot = x.o + x.v);
-  const sortert = [...r].map(x=>x.tot).sort((a,b)=>a-b);
+  const sortert = r.map(x=>x.tot).sort((a,b)=>a-b);
   r.forEach(x=>x.plass = sortert.indexOf(x.tot) + 1);
   document.getElementById("stilling").innerHTML = r.map(x=>
     `<tr><td>${x.navn}</td><td class="c">${x.o}</td><td class="c">${x.v}</td>
@@ -331,7 +420,7 @@ function lagLenke(){
   const st = document.getElementById("delestatus");
   if(navigator.clipboard){
     navigator.clipboard.writeText(url)
-      .then(()=>st.textContent = "Lenken er kopiert. Lim den inn til deltakerne – de ser tabellen slik den er nå.")
+      .then(()=>st.textContent = "Lenken er kopiert. Lim den inn til deltakerne.")
       .catch(()=>st.textContent = "Kopier lenken i feltet under manuelt.");
   } else {
     st.textContent = "Kopier lenken i feltet under manuelt.";
@@ -351,7 +440,7 @@ async function lastNed(){
     a.href = URL.createObjectURL(new Blob([ny], {type:"text/html"}));
     a.download = "index.html";
     a.click();
-    st.textContent = "Ny index.html lastet ned. Last den opp der siden ligger, så ser alle den nye tabellen.";
+    st.textContent = "Ny index.html lastet ned. Last den opp til GitHub og overskriv den gamle.";
   }catch(e){
     const felt = document.getElementById("lenkefelt");
     felt.style.display = "block";
@@ -369,7 +458,6 @@ function tilbakestill(){
   tegn();
 }
 
-/* Lenke-data overstyrer det som ligger i fila */
 if(location.hash.length > 1){
   try{ DATA = lesTilstand(decodeURIComponent(location.hash.slice(1))); }
   catch(e){ console.warn("Kunne ikke lese lenkedata:", e.message); }
