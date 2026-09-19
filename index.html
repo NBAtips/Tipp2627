@@ -6,11 +6,11 @@
 <title>NBA-tipping 2026–27</title>
 <style>
 :root{
-  --p0:#c6efce; --p0t:#006100;
-  --p1:#d9ead3; --p1t:#38761d;
-  --p3:#ffeb9c; --p3t:#9c6500;
-  --p5:#fac090; --p5t:#974706;
-  --p8:#ffc7ce; --p8t:#9c0006;
+  --d0:#c6efce; --d0t:#006100;
+  --d1:#d9ead3; --d1t:#38761d;
+  --d2:#ffeb9c; --d2t:#9c6500;
+  --d3:#fac090; --d3t:#974706;
+  --d4:#ffc7ce; --d4t:#9c0006;
   --teal:#00a19c; --lilla:#5c2d91; --magenta:#e0218a;
   --oransje:#f07427; --gul:#fdc82f; --mork:#141433;
   --gronn:#e2efda;
@@ -30,7 +30,6 @@ body{
 }
 .wrap{max-width:1200px;margin:0 auto}
 
-/* ---- topp ---- */
 .topp{
   position:relative;overflow:hidden;border-radius:14px;padding:20px 22px;margin-bottom:20px;
   background:linear-gradient(100deg,var(--lilla),var(--teal) 55%,var(--magenta));
@@ -57,12 +56,12 @@ h1{
 @keyframes snurr{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.spin{animation:none}}
 
-/* ---- kort ---- */
 .card{
   background:#fff;border:4px solid var(--mork);border-radius:12px;padding:18px;
   margin-bottom:22px;box-shadow:7px 7px 0 rgba(0,161,156,.75);position:relative
 }
 .card.magenta{box-shadow:7px 7px 0 rgba(224,33,138,.7)}
+.card.gulkort{box-shadow:7px 7px 0 rgba(253,200,47,.9)}
 h2{
   color:var(--lilla);font-size:19px;margin:0 0 12px;text-transform:uppercase;
   letter-spacing:1px;font-style:italic;display:flex;align-items:center;gap:9px
@@ -71,7 +70,25 @@ h2 svg{width:22px;height:22px;flex:0 0 auto}
 .strek{height:7px;border-radius:4px;margin:-4px 0 14px;
   background:repeating-linear-gradient(90deg,var(--magenta) 0 16px,var(--gul) 16px 32px,var(--teal) 32px 48px)}
 
-/* ---- tabeller ---- */
+/* ---- poengforklaring ---- */
+.regel{font-size:14px;margin:0 0 14px;line-height:1.5}
+.regel b{color:var(--lilla)}
+.kort{display:flex;gap:10px;flex-wrap:wrap}
+.pk{
+  flex:1 1 118px;min-width:118px;border:3px solid var(--mork);border-radius:9px;
+  padding:10px 8px;text-align:center;box-shadow:3px 3px 0 var(--mork)
+}
+.pk .tall{display:block;font-size:30px;font-weight:bold;line-height:1;font-style:italic}
+.pk .txt{display:block;font-size:11px;margin-top:6px;text-transform:uppercase;
+  letter-spacing:.6px;font-weight:bold}
+.pk.k0{background:var(--d0);color:var(--d0t)}
+.pk.k1{background:var(--d1);color:var(--d1t)}
+.pk.k2{background:var(--d2);color:var(--d2t)}
+.pk.k3{background:var(--d3);color:var(--d3t)}
+.pk.k4{background:var(--d4);color:var(--d4t)}
+.maks{margin-top:12px;font-size:13px;background:var(--mork);color:#fff;padding:9px 13px;
+  border-radius:7px;display:inline-block;font-weight:bold;letter-spacing:.5px}
+
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%;font-size:14px;min-width:760px}
 .stilling table{min-width:0}
@@ -89,16 +106,15 @@ td.fasit.drag{opacity:.35}
 td.fasit.over{box-shadow:inset 0 3px 0 0 var(--magenta)}
 td.tipp{color:#2a2ad0}
 td.poeng{text-align:center;font-weight:bold;width:66px}
-.p0{background:var(--p0)!important;color:var(--p0t)}
-.p1{background:var(--p1)!important;color:var(--p1t)}
-.p3{background:var(--p3)!important;color:var(--p3t)}
-.p5{background:var(--p5)!important;color:var(--p5t)}
-.p8{background:var(--p8)!important;color:var(--p8t)}
+.pd0{background:var(--d0)!important;color:var(--d0t)}
+.pd1{background:var(--d1)!important;color:var(--d1t)}
+.pd2{background:var(--d2)!important;color:var(--d2t)}
+.pd3{background:var(--d3)!important;color:var(--d3t)}
+.pd4{background:var(--d4)!important;color:var(--d4t)}
 tfoot td{background:var(--gul)!important;font-weight:bold;text-align:center}
 .tot{background:var(--gul)!important;font-weight:bold;text-align:center}
-.leder{background:var(--p0)!important;color:var(--p0t);font-weight:bold}
+.leder{background:var(--d0)!important;color:var(--d0t);font-weight:bold}
 
-/* ---- knapper ---- */
 button{
   background:var(--lilla);color:#fff;border:3px solid var(--mork);border-radius:6px;
   padding:8px 14px;font:bold 13px "Trebuchet MS",Verdana,sans-serif;cursor:pointer;
@@ -111,10 +127,6 @@ button.sek:hover{background:var(--gul)}
 .tabs button{background:#fff;color:var(--mork)}
 .tabs button.aktiv{background:var(--teal);color:#fff}
 
-/* ---- diverse ---- */
-.skala{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.skala span{padding:6px 12px;border-radius:4px;font-size:13px;font-weight:bold;
-  border:2px solid var(--mork);box-shadow:2px 2px 0 var(--mork)}
 .status{font-size:13px;color:#4a4a63;margin-top:10px}
 .stempel{font-size:12px;color:#6a6a80;margin-top:8px;font-style:italic}
 .panel{display:none;border-top:4px dashed var(--teal);margin-top:16px;padding-top:14px}
@@ -134,6 +146,7 @@ select{font:inherit;padding:3px;border:1px solid #9a9ab5;border-radius:4px;max-w
   h1{font-size:23px}
   .ball{width:54px;height:54px}
   table{font-size:13px}
+  .pk .tall{font-size:24px}
 }
 </style>
 </head>
@@ -146,7 +159,6 @@ select{font:inherit;padding:3px;border:1px solid #9a9ab5;border-radius:4px;max-w
       <circle cx="50" cy="50" r="46" fill="#f07427" stroke="#141433" stroke-width="5"/>
       <g fill="none" stroke="#141433" stroke-width="4.5">
         <path d="M50 4v92"/>
-        <path d="M6.5 38h87M6.5 62h87" opacity="0"/>
         <path d="M4 50h92"/>
         <path d="M18 14c14 20 14 52 0 72"/>
         <path d="M82 14c-14 20-14 52 0 72"/>
@@ -154,9 +166,38 @@ select{font:inherit;padding:3px;border:1px solid #9a9ab5;border-radius:4px;max-w
     </svg>
     <div>
       <h1>NBA-tipping 26/27</h1>
-      <span class="slag">★ Øst vs Vest ★ Lavest poeng vinner ★</span>
+      <span class="slag">★ Blink-systemet ★ Høyest poengsum vinner ★</span>
     </div>
   </div>
+</div>
+
+<div class="card gulkort">
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="9.5" fill="#fff" stroke="#141433" stroke-width="1.6"/>
+      <circle cx="12" cy="12" r="6" fill="#e0218a" stroke="#141433" stroke-width="1.2"/>
+      <circle cx="12" cy="12" r="2.3" fill="#fdc82f" stroke="#141433" stroke-width="1.2"/>
+    </svg>
+    Slik gis poengene
+  </h2>
+  <div class="strek"></div>
+  <p class="regel">
+    For <b>hvert av de 30 lagene</b> sammenlignes plasseringen du tippet med lagets faktiske
+    plassering i tabellen. Jo nærmere du er, jo flere poeng. <b>Høyest sum vinner.</b>
+  </p>
+  <div class="kort">
+    <div class="pk k0"><span class="tall">8</span><span class="txt">Blink!<br>Helt riktig</span></div>
+    <div class="pk k1"><span class="tall">3</span><span class="txt">1 plass unna</span></div>
+    <div class="pk k2"><span class="tall">2</span><span class="txt">2 plasser unna</span></div>
+    <div class="pk k3"><span class="tall">1</span><span class="txt">3 plasser unna</span></div>
+    <div class="pk k4"><span class="tall">0</span><span class="txt">4 eller flere unna</span></div>
+  </div>
+  <div class="maks">Maks mulig: 120 poeng per konferanse · 240 totalt</div>
+  <p class="regel" style="margin-top:14px">
+    <b>Hvorfor så stort sprang fra 8 til 3?</b> Den store bonusen for blinktreff gjør at løpet
+    holder seg åpent hele sesongen – ett enkelt lag som flytter seg kan snu ledelsen. At 1, 2 og
+    3 plasser unna ligger tett, betyr at ingen kobles av selv om de bommer på et par lag.
+  </p>
 </div>
 
 <div class="card">
@@ -174,13 +215,6 @@ select{font:inherit;padding:3px;border:1px solid #9a9ab5;border-radius:4px;max-w
       <tbody id="stilling"></tbody>
     </table>
   </div>
-  <div class="skala">
-    <span class="p0">0 p – blink</span>
-    <span class="p1">1 p – 1 unna</span>
-    <span class="p3">3 p – 2 unna</span>
-    <span class="p5">5 p – 3 unna</span>
-    <span class="p8">8 p – 4+ unna</span>
-  </div>
   <div class="stempel" id="stempel"></div>
 </div>
 
@@ -195,7 +229,7 @@ select{font:inherit;padding:3px;border:1px solid #9a9ab5;border-radius:4px;max-w
   <div class="hint" id="hjelp" style="display:none">
     <strong>Slik leser du tabellen.</strong> Den grønne kolonnen er den faktiske NBA-tabellen
     akkurat nå. De blå kolonnene er tippene, låst før sesongen. Poengkolonnene til høyre viser
-    hva hver enkelt taper på hver rad: grønt er treff, rødt er langt unna. Summen nederst og
+    hva hver enkelt <em>tjener</em> på hver rad: grønt er blink, rødt er bom. Summen nederst og
     stillingen øverst oppdateres automatisk.
     <br><br>
     <strong>Er du arrangør?</strong> Trykk <em>Rediger</em>, dra lagene i den grønne kolonnen til
@@ -225,190 +259,21 @@ select{font:inherit;padding:3px;border:1px solid #9a9ab5;border-radius:4px;max-w
 <script>
 /*DATA-START*/
 var DATA = {
-  "oppdatert": "19.09.2026 kl. 13:12",
-  "spillere": [
-    "Anders",
-    "Spiller 2",
-    "Spiller 3",
-    "Spiller 4"
-  ],
-  "fasit": {
-    "ost": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14
-    ],
-    "vest": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14
-    ]
+  oppdatert: "ikke oppdatert ennå",
+  spillere: ["Anders","Spiller 2","Spiller 3","Spiller 4"],
+  fasit: {
+    ost: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+    vest:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]
   },
-  "tipp": {
-    "ost": [
-      [
-        5,
-        1,
-        10,
-        12,
-        7,
-        13,
-        0,
-        6,
-        8,
-        11,
-        14,
-        4,
-        3,
-        9,
-        2
-      ],
-      [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14
-      ],
-      [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14
-      ],
-      [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14
-      ]
-    ],
-    "vest": [
-      [
-        13,
-        9,
-        7,
-        1,
-        3,
-        14,
-        11,
-        10,
-        5,
-        0,
-        2,
-        6,
-        8,
-        4,
-        12
-      ],
-      [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14
-      ],
-      [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14
-      ],
-      [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14
-      ]
-    ]
+  tipp: {
+    ost: [[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]],
+    vest:[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]]
   }
 };
 /*DATA-END*/
@@ -422,7 +287,8 @@ const LAG = {
         "Oklahoma City Thunder","Phoenix Suns","Portland Trail Blazers","Sacramento Kings",
         "San Antonio Spurs","Utah Jazz"]
 };
-const POENG = [0,1,3,5,8];
+/* Blink-systemet: indeks = antall plasser unna (4 = fire eller flere) */
+const POENG = [8,3,2,1,0];
 const B36 = "0123456789abcdefghijklmnopqrstuvwxyz";
 let aktiv = "ost", rediger = false;
 
@@ -449,7 +315,8 @@ function lesTilstand(s){
           fasit:{ost:o.fasit, vest:v.fasit}, tipp:{ost:o.tipp, vest:v.tipp}};
 }
 
-const poeng = d => POENG[Math.min(d,4)];
+const avstand = d => Math.min(d, 4);
+const poeng = d => POENG[avstand(d)];
 
 function poengFor(konf, sp){
   let sum = 0;
@@ -482,8 +349,8 @@ function tegnKonf(){
     DATA.spillere.forEach((_,sp)=>{
       const tp = DATA.tipp[aktiv][sp].indexOf(lagIdx);
       if(tp < 0){ h += '<td class="poeng">–</td>'; return; }
-      const p = poeng(Math.abs(plass - tp));
-      h += `<td class="poeng p${p}">${p}</td>`;
+      const d = avstand(Math.abs(plass - tp));
+      h += `<td class="poeng pd${d}">${POENG[d]}</td>`;
     });
     h += '</tr>';
   });
@@ -543,7 +410,8 @@ function kontroller(){
 function tegnStilling(){
   const r = DATA.spillere.map((s,i)=>({navn:s, o:poengFor("ost",i), v:poengFor("vest",i)}));
   r.forEach(x=>x.tot = x.o + x.v);
-  const sortert = r.map(x=>x.tot).sort((a,b)=>a-b);
+  /* Høyest poengsum vinner */
+  const sortert = r.map(x=>x.tot).sort((a,b)=>b-a);
   r.forEach(x=>x.plass = sortert.indexOf(x.tot) + 1);
   document.getElementById("stilling").innerHTML = r.map(x=>
     `<tr><td>${x.navn}</td><td class="c">${x.o}</td><td class="c">${x.v}</td>
