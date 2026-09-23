@@ -259,12 +259,13 @@ select{font:inherit;padding:3px;border:1px solid #9a9ab5;border-radius:4px;max-w
 <script>
 /*DATA-START*/
 var DATA = {
-  "oppdatert": "20.09.2026 kl. 12:13",
+  "oppdatert": "23.09.2026 kl. 12:51",
   "spillere": [
     "Anders F",
     "Anders R",
     "Christer",
-    "Petter"
+    "Petter",
+    "Bookmakerne"
   ],
   "fasit": {
     "ost": [
@@ -310,9 +311,9 @@ var DATA = {
         6,
         5,
         7,
-        11,
         12,
         13,
+        11,
         8,
         0,
         3,
@@ -356,21 +357,38 @@ var DATA = {
         14
       ],
       [
-        0,
+        12,
+        6,
+        10,
         1,
-        2,
+        8,
+        5,
+        7,
+        13,
+        0,
+        14,
+        11,
         3,
         4,
-        5,
-        6,
-        7,
-        8,
-        9,
+        2,
+        9
+      ],
+      [
         10,
-        11,
         12,
+        1,
+        6,
+        5,
+        8,
         13,
-        14
+        7,
+        0,
+        11,
+        3,
+        14,
+        4,
+        9,
+        2
       ]
     ],
     "vest": [
@@ -426,21 +444,38 @@ var DATA = {
         14
       ],
       [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
         13,
-        14
+        9,
+        1,
+        5,
+        7,
+        3,
+        11,
+        14,
+        10,
+        2,
+        0,
+        6,
+        4,
+        8,
+        12
+      ],
+      [
+        9,
+        13,
+        1,
+        7,
+        3,
+        5,
+        11,
+        2,
+        10,
+        14,
+        0,
+        4,
+        6,
+        8,
+        12
       ]
     ]
   }
@@ -660,7 +695,7 @@ function tilbakestill(){
   if(!confirm("Sette alt tilbake til alfabetisk rekkefølge?")) return;
   const r = () => [...Array(15).keys()];
   DATA.fasit = {ost:r(), vest:r()};
-  DATA.tipp = {ost:[r(),r(),r(),r()], vest:[r(),r(),r(),r()]};
+  DATA.tipp = {ost:DATA.spillere.map(() => r()), vest:DATA.spillere.map(() => r())};
   tegn();
 }
 
