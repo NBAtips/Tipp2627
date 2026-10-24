@@ -141,6 +141,23 @@ input[type=text]{font:inherit;padding:4px 6px;border:2px solid var(--mork);borde
 select{font:inherit;padding:3px;border:1px solid #9a9ab5;border-radius:4px;max-width:100%}
 .bunn{text-align:center;padding:6px 0 20px;color:rgba(255,255,255,.55);font-size:12px;
   letter-spacing:1px;text-transform:uppercase}
+/* ---- graf ---- */
+  .nedlast{display:none;margin-top:12px;background:#fff8e1;border:3px solid var(--mork);border-left:8px solid var(--gul);
+    border-radius:6px;padding:12px 14px;font-size:13px;line-height:1.5}
+  .nedlast a.dl{display:inline-block;background:var(--teal);color:#fff;border:3px solid var(--mork);border-radius:6px;
+    padding:8px 14px;font-weight:bold;text-transform:uppercase;letter-spacing:.6px;text-decoration:none;
+    box-shadow:3px 3px 0 var(--mork);margin:6px 8px 6px 0;font-size:13px}
+  .nedlast ol{margin:8px 0 0 18px;padding:0}
+  .grafkontroll{display:flex;flex-wrap:wrap;gap:4px 0;align-items:center;margin-bottom:8px}
+  .lgwrap{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+  .lg{display:inline-flex;align-items:center;gap:7px;margin:0;padding:5px 10px;background:#fff;color:var(--mork);
+    border:2px solid var(--mork);border-radius:20px;box-shadow:none;font-size:12px;text-transform:none;letter-spacing:0}
+  .lg:hover{background:#f2ecfb}
+  .lg:active{transform:none}
+  .lg i{width:12px;height:12px;border-radius:50%;display:inline-block;border:2px solid var(--mork)}
+  .lg.av{opacity:.4;text-decoration:line-through}
+  .grafboks{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .grafboks svg{display:block;width:100%;min-width:520px;height:auto}
 @media(max-width:700px){
   body{padding:12px}
   h1{font-size:23px}
@@ -248,9 +265,30 @@ select{font:inherit;padding:3px;border:1px solid #9a9ab5;border-radius:4px;max-w
     <button onclick="lagLenke()">Lag delelenke</button>
     <button class="sek" onclick="lastNed()">Last ned oppdatert side</button>
     <button class="sek" onclick="tilbakestill()">Tilbakestill</button>
+    <button class="sek" onclick="slettSistePunkt()">Slett siste grafpunkt</button>
+    <button class="sek" onclick="nullstillHistorikk()">Nullstill graf</button>
     <div class="status" id="delestatus"></div>
+    <div class="nedlast" id="nedlast"></div>
     <textarea id="lenkefelt" style="display:none;margin-top:10px" readonly></textarea>
   </div>
+</div>
+
+<div class="card gulkort">
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <polyline points="2,18 8,10 13,14 22,4" fill="none" stroke="#e0218a" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Utvikling
+  </h2>
+  <div class="strek"></div>
+  <div class="grafkontroll tabs">
+    <button id="gm-plass" class="aktiv" onclick="settGrafModus('plass')">Plassering</button>
+    <button id="gm-poeng" onclick="settGrafModus('poeng')">Poeng</button>
+  </div>
+  <div class="grafboks"><div id="graf"></div></div>
+  <div class="lgwrap" id="graflegend"></div>
+  <div class="stempel" id="grafnotat"></div>
 </div>
 
 <div class="bunn">◆ Ball don't lie ◆</div>
@@ -478,7 +516,46 @@ var DATA = {
         12
       ]
     ]
-  }
+  },
+  "historikk": [
+    {
+      "d": "23.10.2026 kl. 10:26",
+      "ost": [
+        12,
+        6,
+        0,
+        13,
+        14,
+        3,
+        7,
+        10,
+        2,
+        11,
+        1,
+        5,
+        9,
+        4,
+        8
+      ],
+      "vest": [
+        9,
+        4,
+        3,
+        11,
+        5,
+        6,
+        7,
+        1,
+        13,
+        0,
+        14,
+        2,
+        12,
+        10,
+        8
+      ]
+    }
+  ]
 };
 /*DATA-END*/
 
@@ -501,30 +578,38 @@ function strTilPerm(s){ return s.split("").map(c=>B36.indexOf(c)); }
 
 function kodeTilstand(d){
   const blokk = k => [d.fasit[k], ...d.tipp[k]].map(permTilStr).join(".");
-  return "v1~" + encodeURIComponent(d.oppdatert) + "~" +
+  const hist = (d.historikk||[]).map(h => [h.d, permTilStr(h.ost), permTilStr(h.vest)].join("|")).join(";");
+  return "v2~" + encodeURIComponent(d.oppdatert) + "~" +
          encodeURIComponent(d.spillere.join("|")) + "~" +
-         blokk("ost") + "~" + blokk("vest");
+         blokk("ost") + "~" + blokk("vest") + "~" + encodeURIComponent(hist);
 }
 
 function lesTilstand(s){
   const del = s.split("~");
-  if(del[0] !== "v1") throw new Error("ukjent format");
+  if(del[0] !== "v1" && del[0] !== "v2") throw new Error("ukjent format");
   const spillere = decodeURIComponent(del[2]).split("|");
   const les = b => { const p = b.split(".").map(strTilPerm);
                      return {fasit:p[0], tipp:p.slice(1)}; };
   const o = les(del[3]), v = les(del[4]);
   const gyldig = p => p.length===15 && new Set(p).size===15 && p.every(x=>x>=0&&x<15);
   if(![o.fasit,v.fasit,...o.tipp,...v.tipp].every(gyldig)) throw new Error("ugyldige data");
+  let historikk = [];
+  if(del[0] === "v2" && del[5]){
+    historikk = decodeURIComponent(del[5]).split(";").filter(Boolean).map(t => {
+      const p = t.split("|");
+      return {d:p[0], ost:strTilPerm(p[1]), vest:strTilPerm(p[2])};
+    }).filter(h => gyldig(h.ost) && gyldig(h.vest));
+  }
   return {oppdatert: decodeURIComponent(del[1]), spillere,
-          fasit:{ost:o.fasit, vest:v.fasit}, tipp:{ost:o.tipp, vest:v.tipp}};
+          fasit:{ost:o.fasit, vest:v.fasit}, tipp:{ost:o.tipp, vest:v.tipp}, historikk};
 }
 
 const avstand = d => Math.min(d, 4);
 const poeng = d => POENG[avstand(d)];
 
-function poengFor(konf, sp){
+function poengFor(konf, sp, fasit){
   let sum = 0;
-  DATA.fasit[konf].forEach((lagIdx, plass)=>{
+  (fasit || DATA.fasit[konf]).forEach((lagIdx, plass)=>{
     const tippPlass = DATA.tipp[konf][sp].indexOf(lagIdx);
     if(tippPlass >= 0) sum += poeng(Math.abs(plass - tippPlass));
   });
@@ -623,7 +708,7 @@ function tegnStilling(){
   document.getElementById("stempel").textContent = "Tabellen sist oppdatert: " + DATA.oppdatert;
 }
 
-function tegn(){ tegnKonf(); tegnStilling(); }
+function tegn(){ tegnKonf(); tegnStilling(); tegnGraf(); }
 
 function visKonf(k){
   aktiv = k;
@@ -644,6 +729,145 @@ function veksleRediger(){
   tegn();
 }
 
+/* ================= Historikk og graf ================= */
+const FARGER = ["#00a19c","#e0218a","#5c2d91","#f07427","#c99a00","#2a2ad0","#38761d","#9c0006","#555555","#0a7ea4"];
+let grafModus = "plass";
+const skjult = new Set();
+
+const likFasit = (a,b) => ["ost","vest"].every(k => a[k].length===b[k].length && a[k].every((x,i)=>x===b[k][i]));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* Legg til et øyeblikksbilde av dagens fasit hvis den er endret siden sist */
+function lagreSnapshot(){
+  if(!DATA.historikk) DATA.historikk = [];
+  const sist = DATA.historikk[DATA.historikk.length-1];
+  if(sist && likFasit(sist, DATA.fasit)) return false;
+  DATA.historikk.push({d: DATA.oppdatert, ost: DATA.fasit.ost.slice(), vest: DATA.fasit.vest.slice()});
+  return true;
+}
+function slettSistePunkt(){
+  if(!DATA.historikk || DATA.historikk.length < 1) return;
+  if(!confirm("Slette det siste lagrede punktet i grafen?")) return;
+  DATA.historikk.pop();
+  tegn();
+}
+function nullstillHistorikk(){
+  if(!confirm("Tømme hele grafhistorikken? Dagens stilling blir nytt startpunkt.")) return;
+  DATA.historikk = [{d: DATA.oppdatert, ost: DATA.fasit.ost.slice(), vest: DATA.fasit.vest.slice()}];
+  tegn();
+}
+function settGrafModus(m){
+  grafModus = m;
+  document.getElementById("gm-plass").classList.toggle("aktiv", m==="plass");
+  document.getElementById("gm-poeng").classList.toggle("aktiv", m==="poeng");
+  tegnGraf();
+}
+function veksleSpiller(i){
+  if(skjult.has(i)) skjult.delete(i); else skjult.add(i);
+  tegnGraf();
+}
+
+/* Beregn poeng og plass for hvert punkt i historikken (+ evt. ulagret "nå") */
+function grafPunkter(){
+  const hist = (DATA.historikk || []).map(h => ({d:h.d, f:{ost:h.ost, vest:h.vest}, ulagret:false}));
+  const sist = hist[hist.length-1];
+  if(!sist || !likFasit(sist.f, DATA.fasit)){
+    hist.push({d:"Nå (ikke lagret)", f:{ost:DATA.fasit.ost, vest:DATA.fasit.vest}, ulagret:true});
+  }
+  return hist.map(p => {
+    const tot = DATA.spillere.map((_,i) => poengFor("ost",i,p.f.ost) + poengFor("vest",i,p.f.vest));
+    const sortert = tot.slice().sort((a,b)=>b-a);
+    return {d:p.d, ulagret:p.ulagret, tot, plass: tot.map(t => sortert.indexOf(t)+1)};
+  });
+}
+
+function xEtikett(p, alle){
+  if(p.ulagret) return "Nå";
+  const dato = (p.d.match(/^\d{2}\.\d{2}/)||[p.d])[0];
+  const dato_ = q => (q.d.match(/^\d{2}\.\d{2}/)||[q.d])[0];
+  const lagrede = alle.filter(q => !q.ulagret);
+  const dup = new Set(lagrede.map(dato_)).size < lagrede.length;
+  const tid = (p.d.match(/kl\.\s*(\d{2}:\d{2})/)||[])[1];
+  return dup && tid ? dato + " " + tid : dato;
+}
+
+function tegnGraf(){
+  const el = document.getElementById("graf");
+  if(!el) return;
+  const pts = grafPunkter();
+  const n = DATA.spillere.length;
+  const W = 800, H = 380, L = 46, R = 46, T = 24, B = 56;
+  const iw = W-L-R, ih = H-T-B;
+  const maks = Math.max(1, ...pts.flatMap(p => p.tot));
+  const stegP = maks <= 40 ? 10 : maks <= 100 ? 20 : maks <= 200 ? 50 : 100;
+  const yMaksP = Math.ceil(maks / stegP) * stegP;
+  const x = i => pts.length === 1 ? L + iw/2 : L + iw * i/(pts.length-1);
+  const y = (p,sp) => grafModus === "plass"
+      ? T + ih * (n===1 ? .5 : (p.plass[sp]-1)/(n-1))
+      : T + ih * (1 - p.tot[sp]/yMaksP);
+  /* Liten forskyvning så like plasseringer ikke ligger oppå hverandre */
+  const jit = sp => grafModus === "plass" ? (sp - (n-1)/2) * 2.5 : 0;
+
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Utvikling i plassering og poeng per spiller">`;
+  s += `<rect x="${L}" y="${T}" width="${iw}" height="${ih}" fill="#faf8ff" stroke="#d8d8e4"/>`;
+
+  /* Y-akse */
+  if(grafModus === "plass"){
+    for(let r=1; r<=n; r++){
+      const yy = T + ih * (n===1 ? .5 : (r-1)/(n-1));
+      s += `<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="#e3dff0"/>`;
+      s += `<text x="${L-10}" y="${yy+5}" text-anchor="end" font-size="15" font-weight="bold" fill="#5c2d91">${r}.</text>`;
+    }
+    s += `<text x="14" y="${T+ih/2}" transform="rotate(-90 14 ${T+ih/2})" text-anchor="middle" font-size="12" fill="#6a6a80">Plassering (1 = best)</text>`;
+  } else {
+    for(let v=0; v<=yMaksP; v+=stegP){
+      const yy = T + ih * (1 - v/yMaksP);
+      s += `<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="#e3dff0"/>`;
+      s += `<text x="${L-8}" y="${yy+4}" text-anchor="end" font-size="12" fill="#5c2d91">${v}</text>`;
+    }
+    s += `<text x="12" y="${T+ih/2}" transform="rotate(-90 12 ${T+ih/2})" text-anchor="middle" font-size="12" fill="#6a6a80">Poeng totalt</text>`;
+  }
+
+  /* X-akse */
+  const maksEtik = Math.max(2, Math.floor(iw/70));
+  const hopp = Math.ceil(pts.length / maksEtik);
+  pts.forEach((p,i)=>{
+    const xx = x(i);
+    s += `<line x1="${xx}" x2="${xx}" y1="${T}" y2="${T+ih}" stroke="#efecf7"/>`;
+    if(i % hopp === 0 || i === pts.length-1){
+      s += `<text x="${xx}" y="${T+ih+22}" text-anchor="middle" font-size="12" fill="#4a4a63">${esc(xEtikett(p, pts))}</text>`;
+    }
+  });
+
+  /* Linjer og punkter */
+  DATA.spillere.forEach((navn, sp)=>{
+    if(skjult.has(sp)) return;
+    const farge = FARGER[sp % FARGER.length];
+    const koord = pts.map((p,i)=>[x(i), y(p,sp)+jit(sp)]);
+    if(pts.length > 1){
+      s += `<polyline points="${koord.map(c=>c.join(",")).join(" ")}" fill="none" stroke="${farge}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" opacity=".92"/>`;
+    }
+    pts.forEach((p,i)=>{
+      const tekst = `${navn}: ${p.plass[sp]}. plass, ${p.tot[sp]} poeng (${p.d})`;
+      s += `<circle cx="${koord[i][0]}" cy="${koord[i][1]}" r="${p.ulagret?5:6}" fill="${p.ulagret?'#fff':farge}" stroke="${p.ulagret?farge:'#141433'}" stroke-width="${p.ulagret?3:2}"><title>${esc(tekst)}</title></circle>`;
+    });
+  });
+  s += `</svg>`;
+  el.innerHTML = s;
+
+  /* Forklaring (klikk for å skjule/vise) */
+  const sist = pts[pts.length-1];
+  document.getElementById("graflegend").innerHTML = DATA.spillere.map((navn,sp)=>
+    `<button type="button" class="lg${skjult.has(sp)?" av":""}" onclick="veksleSpiller(${sp})" title="Klikk for å vise/skjule">` +
+    `<i style="background:${FARGER[sp % FARGER.length]}"></i>${esc(navn)} · ${sist.plass[sp]}. (${sist.tot[sp]} p)</button>`).join("");
+
+  const lagret = pts.filter(p=>!p.ulagret).length;
+  document.getElementById("grafnotat").textContent = pts.length < 2
+    ? "Grafen fylles ut etter hvert som du publiserer nye oppdateringer. Foreløpig finnes bare ett målepunkt."
+    : lagret + " lagrede oppdateringer" + (sist.ulagret ? " + ulagret endring (hvit ring)" : "") +
+      ". Hold musepekeren over et punkt for detaljer. Klikk på et navn for å skjule linjen.";
+}
+
 function nyDato(){
   const d = new Date();
   return d.toLocaleDateString("no-NO",{day:"2-digit",month:"2-digit",year:"numeric"}) +
@@ -652,7 +876,8 @@ function nyDato(){
 
 function lagLenke(){
   DATA.oppdatert = nyDato();
-  tegnStilling();
+  lagreSnapshot();
+  tegn();
   const url = location.origin + location.pathname + "#" + kodeTilstand(DATA);
   const felt = document.getElementById("lenkefelt");
   felt.style.display = "block";
@@ -668,21 +893,98 @@ function lagLenke(){
   }
 }
 
+/* Henter kildekoden til siden. Fungerer fetch (nettside), brukes den; ellers bygges
+   en ren kopi av siden fra DOM-en (gjør at det også virker når fila åpnes lokalt). */
+async function hentKilde(){
+  try{
+    const r = await fetch(location.href.split("#")[0], {cache:"no-store"});
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    const t = await r.text();
+    if(!/DATA-START/.test(t)) throw new Error("ingen datablokk");
+    return t;
+  }catch(e){
+    const k = document.documentElement.cloneNode(true);
+    ["stilling","konf","kontroll","stempel","delestatus","nedlast","graf","graflegend","grafnotat"].forEach(id=>{
+      const x = k.querySelector("#"+id); if(x) x.innerHTML = "";
+    });
+    const nb = k.querySelector("#nedlast"); if(nb) nb.removeAttribute("style");
+    const body = k.querySelector("body"); if(body) body.classList.remove("rediger");
+    const rb = k.querySelector("#redigerknapp"); if(rb) rb.textContent = "Rediger";
+    const h = k.querySelector("#hjelp"); if(h) h.style.display = "none";
+    const lf = k.querySelector("#lenkefelt"); if(lf){ lf.style.display = "none"; lf.textContent = ""; }
+    k.querySelector("#tab-ost").className = "aktiv";
+    k.querySelector("#tab-vest").className = "";
+    k.querySelector("#gm-plass").className = "aktiv";
+    k.querySelector("#gm-poeng").className = "";
+    return "<!DOCTYPE html>\n" + k.outerHTML;
+  }
+}
+
+/* Kopierer tekst til utklippstavlen (virker også i forhåndsvisninger der navigator.clipboard er blokkert) */
+function kopierTekst(tekst){
+  const ta = document.createElement("textarea");
+  ta.value = tekst; ta.setAttribute("readonly","");
+  ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0";
+  document.body.appendChild(ta); ta.select();
+  let ok = false;
+  try{ ok = document.execCommand("copy"); }catch(e){}
+  ta.remove();
+  if(!ok && navigator.clipboard){
+    return navigator.clipboard.writeText(tekst).then(()=>true).catch(()=>false);
+  }
+  return Promise.resolve(ok);
+}
+let sisteFil = "", sisteBlokk = "", sisteUrl = null;
+function kopierFil(hva){
+  kopierTekst(hva === "fil" ? sisteFil : sisteBlokk).then(ok=>{
+    document.getElementById("kopistatus").textContent = ok
+      ? (hva === "fil" ? "Hele fila er kopiert." : "Datablokken er kopiert.")
+      : "Kopiering ble blokkert. Bruk feltet under: marker alt (Ctrl+A) og kopier (Ctrl+C).";
+    if(!ok){
+      const f = document.getElementById("lenkefelt");
+      f.style.display = "block"; f.value = hva === "fil" ? sisteFil : sisteBlokk; f.select();
+    }
+  });
+}
+/* Viser en boks med alternativer, siden nettleseren ikke gir beskjed hvis en nedlasting blir blokkert */
+function visNedlastingsvalg(){
+  const boks = document.getElementById("nedlast");
+  const iramme = (window.self !== window.top) || location.protocol === "about:" || location.protocol === "blob:";
+  const apen = location.protocol.indexOf("http") === 0 ? location.href.split("#")[0] : "";
+  boks.innerHTML =
+    "<strong>Kom det ingen fil i nedlastingene dine?</strong> Nettleseren sier ikke fra hvis den blokkerer nedlastingen." +
+    (iramme ? "<br><strong>Siden ser ut til å vises inne i en annen side eller en forhåndsvisning.</strong> Der blokkeres nedlasting ofte. Åpne siden direkte i en vanlig nettleserfane" + (apen ? ": " + esc(apen) : ".") : "") +
+    '<br><a class="dl" id="dl-lenke" download="index.html" href="' + sisteUrl + '">Last ned index.html</a>' +
+    '<button type="button" class="sek" onclick="kopierFil(\'fil\')">Kopier hele fila</button>' +
+    '<button type="button" class="sek" onclick="kopierFil(\'blokk\')">Kopier bare datablokken</button>' +
+    '<div id="kopistatus" style="font-weight:bold;color:#5c2d91"></div>' +
+    "<ol><li>Gå til repoet på GitHub og åpne <em>index.html</em>.</li>" +
+    "<li>Trykk blyanten (Edit), marker alt (Ctrl+A) og lim inn hele fila.</li>" +
+    "<li>Trykk <em>Commit changes</em>. Siden oppdateres etter et minutt eller to.</li></ol>";
+  boks.style.display = "block";
+}
+
 async function lastNed(){
   DATA.oppdatert = nyDato();
-  tegnStilling();
+  lagreSnapshot();
+  tegn();
   const st = document.getElementById("delestatus");
   const blokk = "/*DATA-START*/\nvar DATA = " + JSON.stringify(DATA, null, 2) + ";\n/*DATA-END*/";
   try{
-    const kilde = await (await fetch(location.href.split("#")[0], {cache:"no-store"})).text();
-    const ny = kilde.replace(/\/\*DATA-START\*\/[\s\S]*?\/\*DATA-END\*\//, ()=>blokk);
-    if(ny === kilde) throw new Error("fant ikke datablokken");
+    const kilde = await hentKilde();
+    const re = /\/\*DATA-START\*\/[\s\S]*?\/\*DATA-END\*\//;
+    if(!re.test(kilde)) throw new Error("fant ikke datablokken");
+    sisteFil = kilde.replace(re, ()=>blokk);
+    sisteBlokk = blokk;
+    if(sisteUrl) URL.revokeObjectURL(sisteUrl);
+    sisteUrl = URL.createObjectURL(new Blob([sisteFil], {type:"text/html"}));
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([ny], {type:"text/html"}));
-    a.download = "index.html";
-    a.click();
-    st.textContent = "Ny index.html lastet ned. Last den opp til GitHub og overskriv den gamle.";
+    a.href = sisteUrl; a.download = "index.html";
+    document.body.appendChild(a); a.click(); a.remove();
+    st.textContent = "Forsøkte å laste ned index.html. Sjekk nedlastingsmappen din. Kommer den ikke, bruk valgene under.";
+    visNedlastingsvalg();
   }catch(e){
+    sisteBlokk = blokk;
     const felt = document.getElementById("lenkefelt");
     felt.style.display = "block";
     felt.value = blokk;
@@ -702,6 +1004,9 @@ function tilbakestill(){
 if(location.hash.length > 1){
   try{ DATA = lesTilstand(decodeURIComponent(location.hash.slice(1))); }
   catch(e){ console.warn("Kunne ikke lese lenkedata:", e.message); }
+}
+if(!DATA.historikk || !DATA.historikk.length){
+  DATA.historikk = [{d: DATA.oppdatert, ost: DATA.fasit.ost.slice(), vest: DATA.fasit.vest.slice()}];
 }
 tegn();
 </script>
